@@ -148,6 +148,7 @@ let lastFrame=performance.now();function loop(now){const dt=Math.min((now-lastFr
  if(x||y){const l=Math.hypot(x,y);x/=l;y/=l;dir={x,y};my.x=clamp(my.x+x*260*dt,28,WORLD.w-28);my.y=clamp(my.y+y*260*dt,28,WORLD.h-28)}
  const now=Date.now();if(now-lastWrite>100){lastWrite=now;set(ref(db,'duel/players/'+uid),{name,x:my.x,y:my.y,lives:my.lives,score:my.score}).catch(e=>{$('error').textContent=e.message})}
 }
+ requestAnimationFrame(loop);
 </script>
 </body>
 </html>
