@@ -5,398 +5,154 @@ html = r'''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EKREMPRO — Fireball Arena</title>
+<title>EKREMPRO Laser Survival</title>
 <style>
-  :root { color-scheme: dark; --cyan:#00e5ff; --orange:#ff6a00; }
-  * { box-sizing: border-box; }
-  body { margin:0; overflow:hidden; background:#050816; color:#eef7ff; font-family:Arial,Helvetica,sans-serif; }
-  #game { position:fixed; inset:0; }
-  canvas { display:block; width:100%; height:100%; }
-  #hud { position:fixed; top:12px; left:12px; right:12px; display:flex; gap:10px; align-items:flex-start; justify-content:space-between; pointer-events:none; }
-  .panel { background:rgba(5,10,25,.82); border:1px solid rgba(0,229,255,.45); border-radius:12px; padding:10px 12px; box-shadow:0 0 18px rgba(0,229,255,.10); pointer-events:auto; }
-  #brand { font-weight:900; letter-spacing:1px; color:var(--cyan); font-size:18px; }
-  #status { font-size:12px; color:#c8d5e5; margin-top:4px; }
-  #score { font-size:14px; margin-top:6px; }
-  #leaders { min-width:155px; max-width:220px; font-size:12px; }
-  #leaders h3 { margin:0 0 7px; color:#ffb15e; font-size:13px; }
-  #leaderList { margin:0; padding-left:20px; }
-  #leaderList li { margin:3px 0; overflow-wrap:anywhere; }
-  #help { position:fixed; left:50%; top:12px; transform:translateX(-50%); text-align:center; font-size:12px; color:#d6e7f5; background:rgba(5,10,25,.75); border-radius:10px; padding:8px 12px; pointer-events:none; }
-  #fire { position:fixed; right:22px; bottom:22px; width:104px; height:104px; border-radius:50%; border:2px solid #ffb15e; color:#fff; font-size:15px; font-weight:900; background:radial-gradient(circle at 35% 25%,#ffd66b,#ff5a00 52%,#8e1700); box-shadow:0 0 25px #ff5a0080; cursor:pointer; }
-  #fire:active { transform:scale(.95); }
-  #mobilePad { position:fixed; left:16px; bottom:18px; display:grid; grid-template-columns:42px 42px 42px; grid-template-rows:42px 42px; gap:5px; }
-  .move { border:1px solid #00e5ff99; background:#07172be8; color:white; border-radius:10px; font-weight:bold; touch-action:none; }
-  #w { grid-column:2; grid-row:1; } #a { grid-column:1; grid-row:2; } #s { grid-column:2; grid-row:2; } #d { grid-column:3; grid-row:2; }
-  #startScreen { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle,#101e3aee,#030611f5); padding:20px; z-index:5; }
-  #startCard { max-width:430px; width:100%; border:1px solid #00e5ff88; border-radius:18px; padding:24px; background:#071020; text-align:center; box-shadow:0 0 45px #00e5ff1a; }
-  #startCard h1 { color:var(--cyan); margin:0 0 8px; font-size:clamp(24px,6vw,36px); }
-  #startCard p { color:#c8d5e5; line-height:1.45; }
-  #playerName { width:100%; padding:13px; border-radius:10px; border:1px solid #334b6b; background:#020714; color:white; font-size:16px; margin:8px 0 12px; }
-  #join { width:100%; padding:13px; border:0; border-radius:10px; background:linear-gradient(90deg,#00b9d4,#008cff); color:#00111a; font-weight:900; font-size:16px; cursor:pointer; }
-  #error { color:#ff9b9b; font-size:13px; min-height:18px; margin-top:10px; }
-  #footer { position:fixed; bottom:8px; left:50%; transform:translateX(-50%); color:#92a9c4; font-size:10px; white-space:nowrap; pointer-events:none; }
-  @media (max-width:600px) { #help { top:96px; font-size:10px; } #leaders { min-width:125px; max-width:145px; padding:8px; } #brand { font-size:15px; } #mobilePad { bottom:18px; } }
+*{box-sizing:border-box}body{margin:0;background:#050816;color:#eef7ff;font-family:Arial,sans-serif;overflow:hidden}
+canvas{display:block;width:100vw;height:100vh;touch-action:none}
+#hud{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}
+.panel{background:#071020eF;border:1px solid #00d9ff88;border-radius:12px;padding:10px 13px;box-shadow:0 0 20px #00d9ff18}
+#brand{font-weight:900;color:#00e5ff;letter-spacing:1px}#status{font-size:12px;color:#b8cee0;margin-top:5px}
+#stats{font-size:14px;margin-top:7px;line-height:1.6}#instructions{position:fixed;top:14px;left:50%;transform:translateX(-50%);font-size:12px;text-align:center;background:#071020d9;padding:9px 12px;border-radius:10px;max-width:48vw}
+#fire{position:fixed;right:20px;bottom:22px;width:94px;height:94px;border-radius:50%;border:2px solid #ffbd59;background:radial-gradient(circle at 35% 25%,#fff18c,#ff6a00 55%,#841900);color:#fff;font-weight:900;font-size:15px;box-shadow:0 0 24px #ff620088}
+#pad{position:fixed;left:15px;bottom:18px;display:grid;grid-template-columns:42px 42px 42px;grid-template-rows:42px 42px;gap:5px}
+.move{background:#071a2cdd;border:1px solid #00d9ff99;color:white;border-radius:9px;font-weight:bold;touch-action:none}
+#w{grid-column:2}#a{grid-column:1;grid-row:2}#s{grid-column:2;grid-row:2}#d{grid-column:3;grid-row:2}
+#start{position:fixed;inset:0;background:radial-gradient(circle,#13213eee,#02040df5);display:flex;align-items:center;justify-content:center;padding:18px;z-index:3}
+#card{width:min(420px,100%);background:#071020;border:1px solid #00d9ff88;border-radius:18px;padding:24px;text-align:center;box-shadow:0 0 45px #00d9ff1c}
+h1{margin:0 0 8px;color:#00e5ff;font-size:clamp(25px,6vw,36px)}p{color:#c3d3e6;line-height:1.45}
+input{width:100%;padding:13px;margin:7px 0 12px;background:#020714;color:white;border:1px solid #3a506e;border-radius:9px;font-size:16px}
+#join{width:100%;padding:13px;border:0;border-radius:9px;background:linear-gradient(90deg,#00d9ff,#008cff);color:#00101b;font-weight:900;font-size:16px}
+#error{min-height:20px;color:#ff9e9e;font-size:13px;margin-top:9px}
+#result{display:none;position:fixed;inset:0;z-index:2;background:#020611dd;align-items:center;justify-content:center;text-align:center;padding:20px}
+#resultBox{background:#081326;border:2px solid #ffae43;border-radius:18px;padding:30px;box-shadow:0 0 45px #ff690044}
+#result h2{font-size:clamp(28px,7vw,50px);color:#ffca62;margin:0 0 12px}
+@media(max-width:600px){#instructions{top:92px;max-width:90vw;font-size:10px}#stats{font-size:12px}.panel{padding:8px}}
 </style>
 </head>
 <body>
-<div id="game"></div>
+<canvas id="c"></canvas>
 <div id="hud">
-  <div class="panel">
-    <div id="brand">⚡ EKREMPRO</div>
-    <div id="status">Firebase-ə qoşulma gözlənilir…</div>
-    <div id="score">Xal: 0</div>
-  </div>
-  <div id="leaders" class="panel">
-    <h3>🏆 LİDERLƏR</h3>
-    <ol id="leaderList"><li>Hələ oyunçu yoxdur</li></ol>
-  </div>
+ <div class="panel"><div id="brand">⚡ EKREMPRO</div><div id="status">Firebase bağlantısı gözlənilir…</div><div id="stats">❤️ Canın: 3/3<br>🎯 Rəqib: gözlənilir</div></div>
 </div>
-<div id="help">WASD / oxlar: hərəkət · SPACE / TOP AT: enerji topu</div>
-<div id="mobilePad" aria-label="Hərəkət düymələri">
-  <button class="move" id="w">▲</button><button class="move" id="a">◀</button><button class="move" id="s">▼</button><button class="move" id="d">▶</button>
-</div>
-<button id="fire">🔥<br>TOP AT!</button>
-<div id="footer">Prototip · xallar brauzer tərəfindən hesablanır</div>
-<div id="startScreen">
-  <div id="startCard">
-    <h1>🔥 FIREBALL ARENA</h1>
-    <p>Canlı multiplayer arena. Dostunla eyni saytı açın, ad yazın və enerji topları atın!</p>
-    <input id="playerName" maxlength="16" placeholder="Oyunçu adın (max 16)" value="Ekrem">
-    <button id="join">OYUNA QOŞUL ⚡</button>
-    <div id="error"></div>
-  </div>
-</div>
-
+<div id="instructions">WASD / oxlar: hərəkət · SPACE: lazer at · Dostun da eyni linki açsın</div>
+<div id="pad"><button class="move" id="w">▲</button><button class="move" id="a">◀</button><button class="move" id="s">▼</button><button class="move" id="d">▶</button></div>
+<button id="fire">🔫<br>LAZER AT</button>
+<div id="start"><div id="card"><h1>🔫 LASER SURVIVAL</h1><p>2 oyunçulu arena! Hər kəsin 3 canı var. Rəqibin canı bitəndə sən qalib gəlirsən.</p><input id="name" maxlength="16" value="Ekrem" placeholder="Oyunçu adı"><button id="join">OYUNA QOŞUL ⚡</button><div id="error"></div></div></div>
+<div id="result"><div id="resultBox"><h2 id="winner">🏆 QAZANDI!</h2><p id="resultText"></p><button id="again">YENİDƏN OYNA</button></div></div>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import { getDatabase, ref, set, update, remove, onValue, onDisconnect, push } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA7DATN9BpZ46svlGT4B-FLCv4mMLzbQqQ",
-  authDomain: "ekrempro.firebaseapp.com",
-  databaseURL: "https://ekrempro-default-rtdb.firebaseio.com",
-  projectId: "ekrempro",
-  storageBucket: "ekrempro.firebasestorage.app",
-  messagingSenderId: "18182912269",
-  appId: "1:18182912269:web:842a6251821845a63fd844",
-  measurementId: "G-DY1N54HTKG"
+ apiKey:"AIzaSyA7DATN9BpZ46svlGT4B-FLCv4mMLzbQqQ",
+ authDomain:"ekrempro.firebaseapp.com",
+ databaseURL:"https://ekrempro-default-rtdb.firebaseio.com",
+ projectId:"ekrempro",
+ storageBucket:"ekrempro.firebasestorage.app",
+ messagingSenderId:"18182912269",
+ appId:"1:18182912269:web:842a6251821845a63fd844",
+ measurementId:"G-DY1N54HTKG"
 };
-
-const $ = (id) => document.getElementById(id);
-const statusEl = $('status');
-const errorEl = $('error');
-let app, auth, db, uid = null, playerName = 'Ekrem', joined = false;
-let myScore = 0, lastShotAt = 0, lastWriteAt = 0;
-const playersData = {};
-const playerMeshes = new Map();
-const shotsData = {};
-const shotMeshes = new Map();
-const keys = {};
-let moveX = 0, moveZ = -1;
-const arenaLimit = 12;
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x050816);
-scene.fog = new THREE.Fog(0x050816, 20, 48);
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(0, 12, 15);
-const renderer = new THREE.WebGLRenderer({ antialias:true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-$('game').appendChild(renderer.domElement);
-
-scene.add(new THREE.HemisphereLight(0x9fdcff, 0x171023, 2.0));
-const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
-keyLight.position.set(5, 12, 6);
-keyLight.castShadow = true;
-scene.add(keyLight);
-
-const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(30, 30),
-  new THREE.MeshStandardMaterial({ color:0x101a30, metalness:0.35, roughness:0.7 })
-);
-floor.rotation.x = -Math.PI / 2;
-floor.receiveShadow = true;
-scene.add(floor);
-const grid = new THREE.GridHelper(30, 30, 0x00d9ff, 0x1d3555);
-grid.position.y = 0.015;
-scene.add(grid);
-
-function addWall(x, z, sx, sz) {
-  const wall = new THREE.Mesh(new THREE.BoxGeometry(sx, 1.3, sz), new THREE.MeshStandardMaterial({color:0x172b48, emissive:0x06172a, metalness:0.5, roughness:0.4}));
-  wall.position.set(x, 0.65, z); wall.castShadow = true; wall.receiveShadow = true; scene.add(wall);
-}
-addWall(0, -14.8, 30, 0.5); addWall(0, 14.8, 30, 0.5);
-addWall(-14.8, 0, 0.5, 30); addWall(14.8, 0, 0.5, 30);
-for (const [x,z] of [[-6,-5],[6,-5],[-6,5],[6,5]]) {
-  const block = new THREE.Mesh(new THREE.BoxGeometry(1.6,1.5,1.6), new THREE.MeshStandardMaterial({color:0x29314d, emissive:0x101a3a}));
-  block.position.set(x,.75,z); block.castShadow = true; scene.add(block);
-}
-
-function makePlayer(color, name) {
-  const group = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.48, 0.55, 4, 8), new THREE.MeshStandardMaterial({color, emissive:color, emissiveIntensity:0.18, roughness:0.35}));
-  body.position.y = 0.82; body.castShadow = true; group.add(body);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.31, 16, 12), new THREE.MeshStandardMaterial({color:0xf2d2b3, roughness:0.65}));
-  head.position.y = 1.62; head.castShadow = true; group.add(head);
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.035, 8, 32), new THREE.MeshBasicMaterial({color}));
-  ring.rotation.x = Math.PI/2; ring.position.y = 0.08; group.add(ring);
-  const labelCanvas = document.createElement('canvas'); labelCanvas.width=256; labelCanvas.height=64;
-  const ctx = labelCanvas.getContext('2d');
-  ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.roundRect(5,5,246,54,12); ctx.fill();
-  ctx.font='bold 25px Arial'; ctx.textAlign='center'; ctx.fillStyle='#ffffff'; ctx.fillText((name || 'Player').slice(0,16),128,40);
-  const texture = new THREE.CanvasTexture(labelCanvas);
-  const label = new THREE.Sprite(new THREE.SpriteMaterial({map:texture, transparent:true, depthTest:false}));
-  label.position.y=2.35; label.scale.set(2.5,0.62,1); group.add(label);
-  scene.add(group);
-  return group;
-}
-
-function createShotMesh() {
-  const group = new THREE.Group();
-  const core = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 12), new THREE.MeshBasicMaterial({color:0xfff4b0}));
-  group.add(core);
-  const outer = new THREE.Mesh(new THREE.SphereGeometry(0.43, 16, 12), new THREE.MeshBasicMaterial({color:0xff4b00, transparent:true, opacity:0.48}));
-  group.add(outer);
-  const light = new THREE.PointLight(0xff4a00, 2.5, 5);
-  group.add(light);
-  const flame = new THREE.Mesh(new THREE.ConeGeometry(0.25,0.65,12), new THREE.MeshBasicMaterial({color:0xffa000}));
-  flame.rotation.x = Math.PI/2; flame.position.z=0.42; group.add(flame);
-  scene.add(group);
-  return group;
-}
-
-function refreshLeaderboard() {
-  const list = $('leaderList');
-  const sorted = Object.entries(playersData).map(([id,p]) => ({id,...p})).sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,8);
-  list.innerHTML = '';
-  if (!sorted.length) { list.innerHTML = '<li>Hələ oyunçu yoxdur</li>'; return; }
-  for (const p of sorted) {
-    const li = document.createElement('li');
-    li.textContent = `${p.name || 'Player'} — ${p.score || 0}`;
-    list.appendChild(li);
-  }
-}
-
-function ensurePlayerMesh(id, data) {
-  if (!playerMeshes.has(id)) {
-    const color = id === uid ? 0x00d9ff : 0xff5a36;
-    playerMeshes.set(id, makePlayer(color, data.name || 'Player'));
-  }
-}
-function removePlayerMesh(id) {
-  const m = playerMeshes.get(id);
-  if (m) { scene.remove(m); m.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } }); playerMeshes.delete(id); }
-}
-
-function listenForGame() {
-  const playersRef = ref(db, 'rooms/main/players');
-  onValue(playersRef, (snap) => {
-    const fresh = snap.val() || {};
-    for (const id of Object.keys(playersData)) if (!fresh[id]) { delete playersData[id]; removePlayerMesh(id); }
-    for (const [id, data] of Object.entries(fresh)) {
-      playersData[id] = data;
-      ensurePlayerMesh(id, data);
+const $=id=>document.getElementById(id), canvas=$('c'),ctx=canvas.getContext('2d');
+let db,uid='',name='Player',joined=false,my={x:100,y:200,lives:3,score:0},players={},shots={},lastShot=0,lastWrite=0,dir={x:1,y:0},gameOver=false;
+const keys={},hitSeen=new Set(),WORLD={w:1000,h:650};
+function resize(){canvas.width=innerWidth*devicePixelRatio;canvas.height=innerHeight*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}addEventListener('resize',resize);resize();
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function draw(){
+ const w=innerWidth,h=innerHeight;ctx.clearRect(0,0,w,h);
+ const scale=Math.min((w-24)/WORLD.w,(h-24)/WORLD.h);const ox=(w-WORLD.w*scale)/2,oy=(h-WORLD.h*scale)/2;
+ ctx.save();ctx.translate(ox,oy);ctx.scale(scale,scale);
+ ctx.fillStyle='#0a1022';ctx.fillRect(0,0,WORLD.w,WORLD.h);
+ ctx.strokeStyle='#183552';ctx.lineWidth=1;for(let x=0;x<=WORLD.w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,WORLD.h);ctx.stroke()}for(let y=0;y<=WORLD.h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(WORLD.w,y);ctx.stroke()}
+ ctx.strokeStyle='#00d9ff';ctx.lineWidth=5;ctx.strokeRect(3,3,WORLD.w-6,WORLD.h-6);
+ for(const [id,p] of Object.entries(players)){
+  const isMe=id===uid,px=Number(p.x)||100,py=Number(p.y)||100;
+  ctx.save();ctx.shadowBlur=18;ctx.shadowColor=isMe?'#00e5ff':'#ff4a35';ctx.fillStyle=isMe?'#00d9ff':'#ff4a35';ctx.beginPath();ctx.arc(px,py,17,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=0;ctx.fillStyle='#eaf7ff';ctx.font='bold 16px Arial';ctx.textAlign='center';ctx.fillText((p.name||'Player').slice(0,16),px,py-28);
+  ctx.fillStyle='#263348';ctx.fillRect(px-23,py+23,46,6);ctx.fillStyle='#ff3b56';ctx.fillRect(px-23,py+23,46*Math.max(0,(Number(p.lives)||0)/3),6);
+  ctx.fillStyle='#fff';ctx.font='12px Arial';ctx.fillText('❤️ '+(p.lives??3),px,py+45);ctx.restore();
+ }
+ for(const [owner,arr] of Object.entries(shots)){for(const [sid,s] of Object.entries(arr||{})){
+  const age=(Date.now()-(s.born||Date.now()))/1000,x=(Number(s.x)||0)+(Number(s.dx)||0)*age*520,y=(Number(s.y)||0)+(Number(s.dy)||0)*age*520;
+  if(age<1.6){ctx.save();ctx.shadowBlur=26;ctx.shadowColor='#ff5a00';ctx.fillStyle='#ffcf54';ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ff4b00';ctx.beginPath();ctx.arc(x,y,15,0,Math.PI*2);ctx.globalAlpha=.45;ctx.fill();ctx.restore()}
+ }}
+ ctx.restore();
+ requestAnimationFrame(draw);
+}requestAnimationFrame(draw);
+function updateStats(){const opp=Object.entries(players).find(([id])=>id!==uid);$('stats').innerHTML=`❤️ Canın: ${my.lives}/3<br>🎯 Rəqib: ${opp?((opp[1].name||'Oyunçu')+' · '+(opp[1].lives??3)+' can'):'gözlənilir'}`;}
+function endGame(winnerName){if(gameOver)return;gameOver=true;$('winner').textContent='🏆 '+winnerName+' QAZANDI!';$('resultText').textContent='Matç bitdi. Yenidən oynamaq üçün düyməyə basın.';$('result').style.display='flex';}
+function watch(){
+ onValue(ref(db,'duel/players'),snap=>{
+  players=snap.val()||{};updateStats();
+  const opp=Object.entries(players).find(([id])=>id!==uid);
+  if(opp&&Number(opp[1].lives)<=0)endGame(name);
+  if(my.lives<=0&&opp)endGame(opp[1].name||'Rəqib');
+ },err=>{$('status').textContent='Players oxunmadı';$('error').textContent=err.message});
+ onValue(ref(db,'duel/shots'),snap=>{
+  shots=snap.val()||{};
+  const now=Date.now();
+  for(const [owner,arr] of Object.entries(shots)){
+   if(owner===uid)continue;
+   for(const [sid,s] of Object.entries(arr||{})){
+    const age=(now-(s.born||now))/1000;if(age>1.6||hitSeen.has(owner+'_'+sid))continue;
+    const sx=(Number(s.x)||0)+(Number(s.dx)||0)*age*520,sy=(Number(s.y)||0)+(Number(s.dy)||0)*age*520;
+    if(Math.hypot(sx-my.x,sy-my.y)<25&&my.lives>0&&!gameOver){
+     hitSeen.add(owner+'_'+sid);my.lives=Math.max(0,my.lives-1);
+     update(ref(db,'duel/players/'+uid),{lives:my.lives}).catch(e=>$('error').textContent=e.message);
+     updateStats();
     }
-    refreshLeaderboard();
-    $('score').textContent = `Xal: ${myScore}`;
-  }, (err) => { statusEl.textContent = 'Oyunçu siyahısı oxunmadı'; errorEl.textContent = err.message; });
-
-  const shotsRef = ref(db, 'rooms/main/shots');
-  onValue(shotsRef, (snap) => {
-    const fresh = snap.val() || {};
-    const keep = new Set();
-    for (const [owner, shots] of Object.entries(fresh)) {
-      for (const [shotId, shot] of Object.entries(shots || {})) {
-        const key = `${owner}_${shotId}`;
-        keep.add(key);
-        shotsData[key] = {...shot, owner, shotId};
-        if (!shotMeshes.has(key)) shotMeshes.set(key, createShotMesh());
-      }
-    }
-    for (const key of [...shotMeshes.keys()]) {
-      if (!keep.has(key)) {
-        const mesh = shotMeshes.get(key); scene.remove(mesh);
-        mesh.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
-        shotMeshes.delete(key); delete shotsData[key];
-      }
-    }
-  }, (err) => { statusEl.textContent = 'Top məlumatı oxunmadı'; errorEl.textContent = err.message; });
-}
-
-async function joinGame() {
-  if (joined) return;
-  playerName = ($('playerName').value.trim() || 'Player').slice(0,16);
-  $('join').disabled = true;
-  $('join').textContent = 'Qoşulur…';
-  errorEl.textContent = '';
-  try {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getDatabase(app);
-    await signInAnonymously(auth);
-    onAuthStateChanged(auth, async (user) => {
-      if (!user || joined) return;
-      uid = user.uid;
-      joined = true;
-      const spawnX = (Math.random() - 0.5) * 14;
-      const spawnZ = (Math.random() - 0.5) * 14;
-      localX = spawnX; localZ = spawnZ;
-      const mine = ref(db, `rooms/main/players/${uid}`);
-      await set(mine, { name:playerName, x:localX, z:localZ, score:myScore });
-      await onDisconnect(mine).remove();
-      listenForGame();
-      $('startScreen').style.display = 'none';
-      statusEl.textContent = '🟢 Qoşuldun · dostun da eyni linki açsın';
-      $('score').textContent = `Xal: ${myScore}`;
-      $('join').disabled = false;
-      $('join').textContent = 'OYUNA QOŞUL ⚡';
-    });
-  } catch (err) {
-    errorEl.textContent = `Qoşulmadı: ${err.message}`;
-    $('join').disabled = false;
-    $('join').textContent = 'YENİDƏN YOХLA';
+   }
   }
+ },err=>{$('status').textContent='Atəşlər oxunmadı';$('error').textContent=err.message});
 }
-
-let localX = 0, localZ = 0;
-function movePlayer(dt) {
-  if (!joined || !uid) return;
-  let x = (keys['d'] || keys['arrowright'] ? 1 : 0) - (keys['a'] || keys['arrowleft'] ? 1 : 0);
-  let z = (keys['s'] || keys['arrowdown'] ? 1 : 0) - (keys['w'] || keys['arrowup'] ? 1 : 0);
-  if (x || z) {
-    const len = Math.hypot(x,z); x/=len; z/=len;
-    localX += x * dt * 7;
-    localZ += z * dt * 7;
-    moveX=x; moveZ=z;
-  }
-  localX = Math.max(-12.4, Math.min(12.4, localX));
-  localZ = Math.max(-12.4, Math.min(12.4, localZ));
-  const mine = playerMeshes.get(uid);
-  if (mine) { mine.position.set(localX,0,localZ); if (x || z) mine.rotation.y = Math.atan2(x,z); }
+async function join(){
+ if(joined)return;
+ name=($('name').value.trim()||'Player').slice(0,16);$('join').disabled=true;$('error').textContent='';
+ try{
+  const app=initializeApp(firebaseConfig);const auth=getAuth(app);db=getDatabase(app);
+  const cred=await signInAnonymously(auth);uid=cred.user.uid;
+  if(Object.keys(players).length>=2&&!players[uid]){throw new Error('Otaq doludur. İki oyunçu limiti var.')}
+  my={x:uid.charCodeAt(0)%2?140:860,y:Math.random()*500+75,lives:3,score:0};
+  await set(ref(db,'duel/players/'+uid),{name,x:my.x,y:my.y,lives:3,score:0});
+  await onDisconnect(ref(db,'duel/players/'+uid)).remove();
+  joined=true;$('start').style.display='none';$('status').textContent='🟢 Qoşuldun · dostun da eyni linki açsın';watch();
+  $('join').disabled=false;
+ }catch(e){$('error').textContent='Qoşulma xətası: '+e.message;$('join').disabled=false}
 }
-
-async function fireball() {
-  if (!joined || !uid || !db) { errorEl.textContent='Əvvəl oyuna qoşul!'; return; }
-  const now = Date.now();
-  if (now - lastShotAt < 450) return;
-  lastShotAt = now;
-  let dx = 0, dz = -1, nearest = Infinity;
-  for (const [id,p] of Object.entries(playersData)) {
-    if (id === uid) continue;
-    const dist = Math.hypot((p.x||0)-localX, (p.z||0)-localZ);
-    if (dist < nearest) { nearest = dist; dx = (p.x-localX); dz = (p.z-localZ); }
-  }
-  if (nearest !== Infinity && nearest > 0.01) { const len=Math.hypot(dx,dz); dx/=len; dz/=len; }
-  else { dx = moveX; dz = moveZ; const len=Math.hypot(dx,dz)||1; dx/=len; dz/=len; }
-  const shotsRef = ref(db, `rooms/main/shots/${uid}`);
-  const newShotRef = push(shotsRef);
-  try {
-    await set(newShotRef, { x:localX, z:localZ, dx, dz, born:Date.now() });
-  } catch (err) { errorEl.textContent = `Top göndərilmədi: ${err.message}`; }
+async function shoot(){
+ if(!joined||gameOver||Date.now()-lastShot<450)return;lastShot=Date.now();
+ let target=Object.entries(players).find(([id,p])=>id!==uid&&Number(p.lives)>0);
+ let dx=dir.x,dy=dir.y;
+ if(target){dx=(Number(target[1].x)||my.x)-my.x;dy=(Number(target[1].y)||my.y)-my.y;const len=Math.hypot(dx,dy)||1;dx/=len;dy/=len}
+ const r=push(ref(db,'duel/shots/'+uid));
+ try{await set(r,{x:my.x,y:my.y,dx,dy,born:Date.now()});setTimeout(()=>remove(r).catch(()=>{}),1800)}
+ catch(e){$('error').textContent='Atəş göndərilmədi: '+e.message}
 }
-
-function updateShots() {
-  const now = Date.now();
-  for (const [key, shot] of Object.entries(shotsData)) {
-    const age = (now - shot.born) / 1000;
-    const mesh = shotMeshes.get(key);
-    if (!mesh) continue;
-    if (age > 2.4) {
-      if (shot.owner === uid) remove(ref(db, `rooms/main/shots/${uid}/${shot.shotId}`)).catch(()=>{});
-      continue;
-    }
-    const x = shot.x + shot.dx * age * 9;
-    const z = shot.z + shot.dz * age * 9;
-    mesh.position.set(x, 0.9 + Math.sin(age*18)*0.08, z);
-    mesh.rotation.y = Math.atan2(shot.dx, shot.dz);
-    if (shot.owner === uid && age > 0.12) {
-      for (const [id,p] of Object.entries(playersData)) {
-        if (id === uid) continue;
-        const dist = Math.hypot((p.x||0)-x, (p.z||0)-z);
-        if (dist < 0.9) {
-          if (myScore < 100) myScore++;
-          $('score').textContent = `Xal: ${myScore}`;
-          const mine = ref(db, `rooms/main/players/${uid}`);
-          update(mine, { score:myScore }).catch(err => errorEl.textContent = err.message);
-          remove(ref(db, `rooms/main/shots/${uid}/${shot.shotId}`)).catch(()=>{});
-          break;
-        }
-      }
-    }
-  }
+function move(dt){
+ if(!joined||gameOver)return;
+ let x=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),y=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);
+ if(x||y){const l=Math.hypot(x,y);x/=l;y/=l;dir={x,y};my.x=clamp(my.x+x*260*dt,28,WORLD.w-28);my.y=clamp(my.y+y*260*dt,28,WORLD.h-28)}
+ const now=Date.now();if(now-lastWrite>100){lastWrite=now;set(ref(db,'duel/players/'+uid),{name,x:my.x,y:my.y,lives:my.lives,score:my.score}).catch(e=>{$('status').textContent='Yazma xətası';$('error').textContent=e.message})}
+ requestAnimationFrame(()=>move(Math.min((Date.now()-now)/1000,.05)));
 }
-
-function animate() {
-  requestAnimationFrame(animate);
-  const dt = Math.min(clock.getDelta(), 0.05);
-  movePlayer(dt);
-  updateShots();
-  for (const [id,p] of Object.entries(playersData)) {
-    const mesh = playerMeshes.get(id);
-    if (!mesh) continue;
-    if (id !== uid) {
-      mesh.position.set(Number(p.x)||0, 0, Number(p.z)||0);
-    } else {
-      mesh.position.set(localX,0,localZ);
-    }
-  }
-  if (joined) {
-    const target = new THREE.Vector3(localX, 0, localZ);
-    const desired = new THREE.Vector3(localX, 10, localZ + 11);
-    camera.position.lerp(desired, 0.08);
-    camera.lookAt(target);
-  }
-  renderer.render(scene,camera);
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.code==='Space'){e.preventDefault();shoot()}});
+addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));
+$('fire').onclick=shoot;$('join').onclick=join;
+for(const [id,k] of [['w','w'],['a','a'],['s','s'],['d','d']]){const b=$(id);b.onpointerdown=e=>{e.preventDefault();keys[k]=true};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>keys[k]=false}
+$('again').onclick=()=>location.reload();
+setInterval(()=>{if(!joined)return;for(const [owner,arr] of Object.entries(shots)){for(const [sid,s] of Object.entries(arr||{})){if(Date.now()-(s.born||0)>2200&&owner===uid)remove(ref(db,`duel/shots/${owner}/${sid}`)).catch(()=>{})}}},500);
+let lastFrame=performance.now();function loop(now){const dt=Math.min((now-lastFrame)/1000,.05);lastFrame=now;if(joined)moveFrame(dt);requestAnimationFrame(loop)}function moveFrame(dt){
+ if(gameOver)return;
+ let x=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),y=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);
+ if(x||y){const l=Math.hypot(x,y);x/=l;y/=l;dir={x,y};my.x=clamp(my.x+x*260*dt,28,WORLD.w-28);my.y=clamp(my.y+y*260*dt,28,WORLD.h-28)}
+ const now=Date.now();if(now-lastWrite>100){lastWrite=now;set(ref(db,'duel/players/'+uid),{name,x:my.x,y:my.y,lives:my.lives,score:my.score}).catch(e=>{$('error').textContent=e.message})}
 }
-const clock = new THREE.Clock();
-animate();
-
-setInterval(async () => {
-  if (!joined || !uid || !db) return;
-  const now = Date.now();
-  if (now - lastWriteAt < 90) return;
-  lastWriteAt = now;
-  try {
-    await set(ref(db, `rooms/main/players/${uid}`), { name:playerName, x:localX, z:localZ, score:myScore });
-  } catch (err) {
-    statusEl.textContent = 'Database yazma xətası';
-    errorEl.textContent = err.message;
-  }
-}, 100);
-
-window.addEventListener('keydown', (e) => {
-  const k=e.key.toLowerCase(); keys[k]=true;
-  if (k===' ' || k==='spacebar') { e.preventDefault(); fireball(); }
-});
-window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()]=false; });
-window.addEventListener('blur', () => { for (const k of Object.keys(keys)) keys[k]=false; });
-$('fire').addEventListener('click', fireball);
-$('join').addEventListener('click', joinGame);
-for (const [id,key] of [['w','w'],['a','a'],['s','s'],['d','d']]) {
-  const b=$(id);
-  const down=(e)=>{e.preventDefault(); keys[key]=true;};
-  const up=(e)=>{e.preventDefault(); keys[key]=false;};
-  b.addEventListener('pointerdown',down);
-  b.addEventListener('pointerup',up);
-  b.addEventListener('pointerleave',up);
-  b.addEventListener('pointercancel',up);
-}
-window.addEventListener('resize', () => {
-  camera.aspect=window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight);
-});
 </script>
 </body>
 </html>
 '''
-path = Path("/mnt/data/index.html")
-path.write_text(html, encoding="utf-8")
-print(f"Created {path} ({path.stat().st_size} bytes)")
-
+p = Path("/mnt/data/ekrempro_laser_survival.html")
+p.write_text(html, encoding="utf-8")
+print(f"Created {p} ({p.stat().st_size:,} bytes)")
 
