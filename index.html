@@ -5,6 +5,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>EKREMPRO Multiplayer</title>
+  <div id="game">
+  <h2>⚽ TOP ATMA</h2>
+  <p id="score">Xal: 0</p>
+  <button id="throwBall">TOP AT! 💥</button>
+  <p id="message"></p>
+</div>
 <style>
 body {
   background: #05070d;
@@ -178,6 +184,19 @@ onValue(ref(db, "rooms/main/players"), (snapshot) => {
 }, (error) => {
   status.textContent = "Oxuma icazəsi yoxdur: " + error.message;
 });
+  <script>
+let score = 0;
+
+document.getElementById("throwBall").onclick = function () {
+  score++;
+
+  document.getElementById("score").textContent =
+    "Xal: " + score;
+
+  document.getElementById("message").textContent =
+    "⚽ TOP ATILDI! 💥";
+};
+</script>
 </script>
 </body>
 </html>
