@@ -3,173 +3,183 @@
 <html lang="az">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EKREM İBADOV | HACKER</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EKREMPRO Multiplayer</title>
 <style>
-* {
-    box-sizing: border-box;
-}
-
 body {
-    margin: 0;
-    background: #020604;
-    color: #00ff66;
-    font-family: Consolas, monospace;
-    text-align: center;
-    min-height: 100vh;
-    padding: 25px 15px;
+  background: #05070d;
+  color: #00eaff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
 }
-
-header {
-    border-bottom: 1px solid #00ff6655;
-    padding: 15px;
-    letter-spacing: 4px;
-    text-shadow: 0 0 12px #00ff66;
+.box {
+  max-width: 500px;
+  margin: 25px auto;
+  padding: 20px;
+  border: 1px solid #00eaff;
+  border-radius: 15px;
+  background: #0b1020;
 }
-
-.status {
-    color: #00ff66;
-    font-size: 13px;
-    margin-top: 35px;
+input, button {
+  padding: 12px;
+  margin: 6px;
+  border-radius: 8px;
 }
-
-h1 {
-    color: #00ff66;
-    font-size: clamp(30px, 7vw, 65px);
-    overflow-wrap: anywhere;
-    text-shadow: 0 0 10px #00ff66, 0 0 35px #00aa44;
-    margin: 25px 0;
+button {
+  background: #00eaff;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
 }
-
-.subtitle {
-    color: #00d9ff;
-    letter-spacing: 3px;
-}
-
-.terminal {
-    max-width: 650px;
-    margin: 35px auto;
-    padding: 20px;
-    text-align: left;
-    border: 1px solid #00ff66;
-    border-radius: 8px;
-    background: #001008;
-    box-shadow: 0 0 20px #00ff6622;
-    line-height: 1.8;
-    overflow-wrap: anywhere;
-}
-
-.terminal span {
-    color: #00d9ff;
-}
-
-.gallery {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 22px;
-    margin: 35px auto;
-}
-
-.photo {
-    width: 320px;
-    max-width: 100%;
-    padding: 10px;
-    border: 1px solid #00ff66;
-    background: #001008;
-    border-radius: 8px;
-    box-shadow: 0 0 18px #00ff6633;
-}
-
-.photo img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 4px;
-}
-
-.photo p {
-    color: #00d9ff;
-    font-size: 12px;
-    overflow-wrap: anywhere;
-}
-
-.button {
-    display: inline-block;
-    color: #00ff66;
-    border: 1px solid #00ff66;
-    padding: 13px 22px;
-    text-decoration: none;
-    margin: 10px;
-    transition: 0.2s;
-}
-
-.button:hover {
-    color: #020604;
-    background: #00ff66;
-    box-shadow: 0 0 25px #00ff66;
-}
-
-footer {
-    color: #52745e;
-    font-size: 12px;
-    padding: 30px 0;
-    border-top: 1px solid #00ff6633;
+li {
+  text-align: left;
+  padding: 8px;
 }
 </style>
 </head>
-
 <body>
+<h1>⚡ EKREMPRO</h1>
+<h2>🏁 Multiplayer Race</h2>
 
-<header>
-    EKREMPRO // CYBER SPACE
-</header>
-
-<div class="status">[ SYSTEM ONLINE ]</div>
-
-<h1>EKREM İBADOV</h1>
-
-<div class="subtitle">WELCOME TO MY DIGITAL WORLD</div>
-
-<div class="terminal">
-    <div><span>root@ekrem:~$</span> initialize_profile</div>
-    <div>> Name: EKREM İBADOV</div>
-    <div>> Status: <span>ONLINE</span></div>
-    <div>> Mission: Learn. Code. Create.</div>
-    <div><span>root@ekrem:~$</span> <span>_</span></div>
+<div class="box">
+  <input id="playerName" maxlength="16"
+         placeholder="Oyuncu adın">
+  <button id="joinBtn">OYUNA QOŞUL</button>
+  <p id="status">Firebase bağlantısı gözlənilir...</p>
+  <h3 id="score">Xal: 0</h3>
+  <button id="raceBtn" disabled>🏃 QAÇ!</button>
 </div>
 
-<h2>— MY FILES —</h2>
-
-<div class="gallery">
-
-    <div class="photo">
-        <img
-        src="Ekran%20%C5%9F%C9%99kli%202026-10-15%20163106.png"
-        alt="Ekrem şəkil 1">
-        <p>FILE_01.PNG</p>
-    </div>
-
-    <div class="photo">
-        <img
-        src="Ekran%20%C5%9F%C9%99kli%202026-10-24%20212146.png"
-        alt="Ekrem şəkil 2">
-        <p>FILE_02.PNG</p>
-    </div>
-
+<div class="box">
+  <h2>🏆 Liderlər cədvəli</h2>
+  <ol id="leaderboard"></ol>
 </div>
 
-<a class="button"
-href="https://github.com/gojofanekremibadov6731-star">
-MY GITHUB ↗
-</a>
+<script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import {
+  getAuth, signInAnonymously
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import {
+  getDatabase, ref, set, onValue, update
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
-<footer>
-    EKREMPRO © 2026 // ALL SYSTEMS ACTIVE
-</footer>
+const firebaseConfig = {
+  apiKey: "AIzaSyA7DATN9BpZ46svlGT4B-FLCv4mMLzbQqQ",
+  authDomain: "ekrempro.firebaseapp.com",
+  databaseURL: "https://ekrempro-default-rtdb.firebaseio.com",
+  projectId: "ekrempro",
+  storageBucket: "ekrempro.firebasestorage.app",
+  messagingSenderId: "18182912269",
+  appId: "1:18182912269:web:842a6251821845a63fd844",
+  measurementId: "G-DY1N54HTKG"
+};
 
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let uid = null;
+let score = 0;
+let joined = false;
+
+const status = document.getElementById("status");
+const scoreText = document.getElementById("score");
+const joinBtn = document.getElementById("joinBtn");
+const raceBtn = document.getElementById("raceBtn");
+const nameInput = document.getElementById("playerName");
+
+signInAnonymously(auth).then((result) => {
+  uid = result.user.uid;
+  status.textContent = "Giriş hazır! Adını yaz və qoşul.";
+}).catch((error) => {
+  status.textContent = "Giriş xətası: " + error.message;
+});
+
+joinBtn.onclick = async function() {
+  if (!uid) {
+    status.textContent = "Bir az gözlə, giriş hazırlanır.";
+    return;
+  }
+
+  const name = nameInput.value.trim();
+
+  if (!name) {
+    status.textContent = "Əvvəlcə adını yaz!";
+    return;
+  }
+
+  try {
+    const playersRef = ref(db, "rooms/main/players");
+    const snapshot = await new Promise((resolve, reject) => {
+      onValue(playersRef, resolve, reject, { onlyOnce: true });
+    });
+
+    const players = snapshot.val() || {};
+
+    if (!players[uid] &&
+        Object.keys(players).length >= 100) {
+      status.textContent = "Oyun doludur! Maksimum 100 nəfər.";
+      return;
+    }
+
+    await set(ref(db, "rooms/main/players/" + uid), {
+      name: name.slice(0, 16),
+      score: 0
+    });
+
+    joined = true;
+    raceBtn.disabled = false;
+    nameInput.disabled = true;
+    joinBtn.disabled = true;
+    status.textContent = "Oyuna qoşuldun! QAÇ düyməsinə bas!";
+  } catch (error) {
+    status.textContent =
+      "Database icazəsi yoxdur. Firebase Rules yoxlanmalıdır.";
+  }
+};
+
+raceBtn.onclick = async function() {
+  if (!joined || !uid) return;
+
+  score += 1;
+  scoreText.textContent = "Xal: " + score;
+
+  try {
+    await update(ref(db, "rooms/main/players/" + uid), {
+      score: score
+    });
+  } catch (error) {
+    status.textContent =
+      "Xal saxlanmadı. Database Rules icazə vermir.";
+  }
+};
+
+onValue(ref(db, "rooms/main/players"), (snapshot) => {
+  const players = Object.entries(snapshot.val() || {});
+  players.sort((a, b) =>
+    (Number(b[1].score) || 0) -
+    (Number(a[1].score) || 0)
+  );
+
+  const list = document.getElementById("leaderboard");
+  list.replaceChildren();
+
+  players.forEach((entry, index) => {
+    const item = document.createElement("li");
+    item.textContent =
+      (index + 1) + ". " +
+      entry[1].name + " — " +
+      (Number(entry[1].score) || 0) + " xal";
+    list.appendChild(item);
+  });
+}, (error) => {
+  status.textContent = "Oxuma icazəsi yoxdur: " + error.message;
+});
+</script>
 </body>
 </html>
+
 
